@@ -1,0 +1,19 @@
+import requests as rq
+from prefect import task,Flow
+
+@task
+def extract():
+    r=rq.request('get','https://jsonplaceholder.typicode.com/posts')
+    r=r.json()
+    return r
+
+@task
+def load(response):
+    output = response[0]['title']
+    print(f' la extraccion resultante es===== {output}')
+
+with Flow('p1_JsonPlaceHolder') as flow:
+    raw=extract()
+    load(raw)
+
+flow.run()
